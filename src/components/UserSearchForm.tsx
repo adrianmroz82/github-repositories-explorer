@@ -1,16 +1,14 @@
 import { useForm } from "react-hook-form";
 import { TextField, Button, CircularProgress } from "@mui/material";
 
-interface Props {
-  onSearch: (username: string) => void;
-  isLoading: boolean;
-}
+import { useUserSearchContext } from "@/hooks/useUserSearchContext";
 
-interface FormData {
+type FormData = {
   username: string;
-}
+};
 
-export function UserSearchForm({ onSearch, isLoading }: Props) {
+export function UserSearchForm() {
+  const { handleSearch, isLoading } = useUserSearchContext();
   const {
     register,
     handleSubmit,
@@ -18,10 +16,8 @@ export function UserSearchForm({ onSearch, isLoading }: Props) {
   } = useForm<FormData>();
 
   const onSubmit = (data: FormData) => {
-    onSearch(data.username);
+    handleSearch(data.username);
   };
-
-  console.log("errors", errors);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -37,9 +33,10 @@ export function UserSearchForm({ onSearch, isLoading }: Props) {
       <Button
         type="submit"
         variant="contained"
+        color="primary"
         fullWidth
         disabled={isLoading}
-        sx={{ marginTop: "1rem", backgroundColor: "#5009dc" }}>
+        sx={{ marginTop: "1rem" }}>
         {isLoading ? <CircularProgress size={24} /> : "Search"}
       </Button>
     </form>

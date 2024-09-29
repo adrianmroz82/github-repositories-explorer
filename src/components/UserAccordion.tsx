@@ -21,13 +21,10 @@ interface Props {
 }
 
 export function UserAccordion({ user, expanded, handleAccordionChange }: Props) {
-  const { data: repositories, isFetching: isFetchingRepos } = useUserRepositoriesQuery(
-    user.login,
-    expanded === user.login
-  );
+  const { data: repositories, isFetching } = useUserRepositoriesQuery(user.login, expanded === user.login);
 
   function renderContent() {
-    if (isFetchingRepos) {
+    if (isFetching) {
       return <CircularProgress />;
     }
 
@@ -37,8 +34,8 @@ export function UserAccordion({ user, expanded, handleAccordionChange }: Props) 
 
     return (
       <List>
-        {repositories.map((repo: Repository) => (
-          <ListItem key={repo.id}>{repo.name}</ListItem>
+        {repositories.map(({ id, name }: Repository) => (
+          <ListItem key={id}>{name}</ListItem>
         ))}
       </List>
     );

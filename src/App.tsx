@@ -1,23 +1,11 @@
-import React, { useState } from "react";
-import { Box, Container, Typography } from "@mui/material";
-import { User } from "@/model/user.model";
-import { UserAccordion } from "@/components/UserAccordion";
+import { Box, CircularProgress, Container, Typography } from "@mui/material";
+
+import { UserList } from "@/components/UserList";
 import { UserSearchForm } from "@/components/UserSearchForm";
-import { useSearchUsersQuery } from "@/hooks/useSearchUsersQuery";
+import { useUserSearchContext } from "@/hooks/useUserSearchContext";
 
-export const App = () => {
-  const [username, setUsername] = useState("");
-  const [expanded, setExpanded] = useState<string | false>(false);
-
-  const { data: users, isFetching: isSearchingUsers } = useSearchUsersQuery(username);
-
-  const handleSearch = (username: string) => {
-    setUsername(username);
-  };
-
-  const handleAccordionChange = (userLogin: string) => (_: React.SyntheticEvent, isExpanded: boolean) => {
-    setExpanded(isExpanded ? userLogin : false);
-  };
+export function App() {
+  const { isLoading } = useUserSearchContext();
 
   return (
     <Container maxWidth="sm">
@@ -25,29 +13,15 @@ export const App = () => {
         display="flex"
         flexDirection="column"
         alignItems="center"
-        justifyContent="center"
+        paddingTop={16}
         minHeight="100vh"
         textAlign="center">
         <Typography variant="h4" gutterBottom>
           GitHub User Search
         </Typography>
-        <UserSearchForm onSearch={handleSearch} isLoading={isSearchingUsers} />
-
-        {users && (
-          <Box width="100%" mt={4}>
-            {users.map((user: User) => (
-              <UserAccordion
-                key={user.id}
-                user={user}
-                expanded={expanded}
-                handleAccordionChange={handleAccordionChange}
-              />
-            ))}
-          </Box>
-        )}
-
-        {/* {users && <UserList users={users} expanded={expanded} handleAccordionChange={handleAccordionChange} />} */}
+        <UserSearchForm />
+        {isLoading ? <CircularProgress sx={{ marginTop: 4 }} /> : <UserList />}
       </Box>
     </Container>
   );
-};
+}

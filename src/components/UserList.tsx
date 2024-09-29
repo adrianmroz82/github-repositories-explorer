@@ -1,15 +1,14 @@
 import { Box, Typography } from "@mui/material";
-import { User } from "@/model/user.model";
+
 import { UserAccordion } from "@/components/UserAccordion";
+import { useUserSearchContext } from "@/hooks/useUserSearchContext";
 
-interface UserListProps {
-  users: User[];
-  expanded: string | false;
-  handleAccordionChange: (userLogin: string) => (_: React.SyntheticEvent, isExpanded: boolean) => void;
-}
+export function UserList() {
+  const { users, expanded, handleAccordionChange, hasSearched } = useUserSearchContext();
 
-export function UserList({ users, expanded, handleAccordionChange }: UserListProps) {
-  if (users.length === 0) {
+  const noUsersFound = hasSearched && users.length === 0;
+
+  if (noUsersFound) {
     return (
       <Typography variant="body1" color="text.secondary" align="center">
         No users found.
@@ -19,7 +18,7 @@ export function UserList({ users, expanded, handleAccordionChange }: UserListPro
 
   return (
     <Box width="100%" mt={4}>
-      {users.map((user: User) => (
+      {users.map((user) => (
         <UserAccordion key={user.id} user={user} expanded={expanded} handleAccordionChange={handleAccordionChange} />
       ))}
     </Box>
