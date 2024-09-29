@@ -1,35 +1,53 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import { Box, Container, Typography } from "@mui/material";
+import { User } from "@/model/user.model";
+import { UserAccordion } from "@/components/UserAccordion";
+import { UserSearchForm } from "@/components/UserSearchForm";
+import { useSearchUsersQuery } from "@/hooks/useSearchUsersQuery";
 
-function App() {
-  const [count, setCount] = useState(0)
+export const App = () => {
+  const [username, setUsername] = useState("");
+  const [expanded, setExpanded] = useState<string | false>(false);
+
+  const { data: users, isFetching: isSearchingUsers } = useSearchUsersQuery(username);
+
+  const handleSearch = (username: string) => {
+    setUsername(username);
+  };
+
+  const handleAccordionChange = (userLogin: string) => (_: React.SyntheticEvent, isExpanded: boolean) => {
+    setExpanded(isExpanded ? userLogin : false);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <Container maxWidth="sm">
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        minHeight="100vh"
+        textAlign="center">
+        <Typography variant="h4" gutterBottom>
+          GitHub User Search
+        </Typography>
+        <UserSearchForm onSearch={handleSearch} isLoading={isSearchingUsers} />
 
-export default App
+        {users && (
+          <Box width="100%" mt={4}>
+            {users.map((user: User) => (
+              <UserAccordion
+                key={user.id}
+                user={user}
+                expanded={expanded}
+                handleAccordionChange={handleAccordionChange}
+              />
+            ))}
+          </Box>
+        )}
+
+        {/* {users && <UserList users={users} expanded={expanded} handleAccordionChange={handleAccordionChange} />} */}
+      </Box>
+    </Container>
+  );
+};
