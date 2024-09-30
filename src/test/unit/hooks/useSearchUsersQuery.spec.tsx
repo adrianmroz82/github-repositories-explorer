@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useSearchUsersQuery } from "@/hooks/useSearchUsersQuery";
-import { searchUsers } from "@/api/github-api";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactNode } from "react";
 import { renderHook, waitFor } from "@testing-library/react";
 import { User } from "@/model/user.model";
 
+const searchUsersMock = vi.fn();
 vi.mock("@/api/github-api", () => ({
-  searchUsers: vi.fn(),
+  searchUsers: (username: string) => searchUsersMock(username),
 }));
 
 const queryClient = new QueryClient();
@@ -31,7 +31,7 @@ describe("useSearchUsersQuery", () => {
     // then
     expect(result.current.isLoading).toBe(false);
     expect(result.current.data).toBeUndefined();
-    expect(searchUsers).not.toHaveBeenCalled();
+    expect(searchUsersMock).not.toHaveBeenCalled();
   });
 
   it("should call searchUsers and return data when username is provided", async () => {
@@ -39,7 +39,7 @@ describe("useSearchUsersQuery", () => {
     const mockUsername = "testUser";
     const mockUsers: Pick<User, "id" | "login">[] = [{ id: 1, login: mockUsername }];
 
-    searchUsers.mockResolvedValueOnce(mockUsers);
+    searchUsersMock.mockResolvedValueOnce(mockUsers);
 
     // when
     const { result } = renderHook(() => useSearchUsersQuery(mockUsername), {
@@ -49,7 +49,7 @@ describe("useSearchUsersQuery", () => {
     // then
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
-      expect(searchUsers).toHaveBeenCalledWith(mockUsername);
+      expect(searchUsersMock).toHaveBeenCalledWith(mockUsername);
       expect(result.current.data).toEqual(mockUsers);
     });
   });

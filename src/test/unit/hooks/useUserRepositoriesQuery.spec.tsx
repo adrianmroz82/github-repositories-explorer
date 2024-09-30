@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useUserRepositoriesQuery } from "@/hooks/useUserRepositoriesQuery";
-import { getUserRepositories } from "@/api/github-api";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { renderHook, waitFor } from "@testing-library/react";
 import { ReactNode } from "react";
 import { Repository } from "@/model/repository.model";
 
+const getUserRepositoriesMock = vi.fn();
 vi.mock("@/api/github-api", () => ({
-  getUserRepositories: vi.fn(),
+  getUserRepositories: (username: string) => getUserRepositoriesMock(username),
 }));
 
 const queryClient = new QueryClient();
@@ -31,7 +31,7 @@ describe("useUserRepositoriesQuery", () => {
     // then
     expect(result.current.isLoading).toBe(false);
     expect(result.current.data).toBeUndefined();
-    expect(getUserRepositories).not.toHaveBeenCalled();
+    expect(getUserRepositoriesMock).not.toHaveBeenCalled();
   });
 
   it("should call getUserRepositories and return data when isEnabled is true", async () => {
@@ -39,7 +39,7 @@ describe("useUserRepositoriesQuery", () => {
     const mockUserLogin = "testUser";
     const mockRepositories: Pick<Repository, "id" | "name">[] = [{ id: 1, name: "testRepo" }];
 
-    getUserRepositories.mockResolvedValueOnce(mockRepositories);
+    getUserRepositoriesMock.mockResolvedValueOnce(mockRepositories);
 
     // when
     const { result } = renderHook(() => useUserRepositoriesQuery(mockUserLogin, true), {
@@ -49,7 +49,7 @@ describe("useUserRepositoriesQuery", () => {
     // then
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
-      expect(getUserRepositories).toHaveBeenCalledWith(mockUserLogin);
+      expect(getUserRepositoriesMock).toHaveBeenCalledWith(mockUserLogin);
       expect(result.current.data).toEqual(mockRepositories);
     });
   });
