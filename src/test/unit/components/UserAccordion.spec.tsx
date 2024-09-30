@@ -108,7 +108,7 @@ describe("UserAccordion", () => {
     // given
     const mockHandleAccordionChange = vi.fn();
     const { getByTestId } = render(
-      <UserAccordion user={mockUser} expanded={false} handleAccordionChange={mockHandleAccordionChange} />
+      <UserAccordion user={mockUser as User} expanded={false} handleAccordionChange={mockHandleAccordionChange} />
     );
 
     // when

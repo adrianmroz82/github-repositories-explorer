@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { useUserSearchContext } from "@/hooks/useUserSearchContext"; // Adjust the import path as needed
 import { UserSearchContext } from "@/context/userSearch.context"; // Import the context
 import { ContextType, ReactNode } from "react";
