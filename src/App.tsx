@@ -8,20 +8,19 @@ export function App() {
   const { isLoading } = useUserSearchContext();
 
   return (
-    <Container data-testid="app-container" maxWidth="sm">
+    <Container maxWidth="sm">
       <Box
-        data-testid="app-box"
         display="flex"
         flexDirection="column"
         alignItems="center"
         paddingTop={16}
         minHeight="100vh"
         textAlign="center">
-        <Typography data-testid="app-user-search-typography" variant="h4" gutterBottom>
+        <Typography variant="h4" gutterBottom>
           GitHub User Search
         </Typography>
         <UserSearchForm />
-        {isLoading ? <CircularProgress data-testid="app-circular-progress" sx={{ marginTop: 4 }} /> : <UserList />}
+        {isLoading ? <CircularProgress sx={{ marginTop: 4 }} /> : <UserList />}
       </Box>
     </Container>
   );
